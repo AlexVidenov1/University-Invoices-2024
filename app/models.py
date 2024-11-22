@@ -1,39 +1,65 @@
-from sqlalchemy import Column, Integer, String, Numeric, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, Enum
 from sqlalchemy.orm import relationship
-from app.database import Base
+from sqlalchemy.ext.declarative import declarative_base
+from enum import Enum as PyEnum
 
-class Client(Base):
-    __tablename__ = "clients"
+Base = declarative_base()
+
+# Enum for Invoice Type and Status
+class ITypeEnum(PyEnum):
+    income = "income"
+    expense = "expense"
+
+class IStatusEnum(PyEnum):
+    unpaid = "unpaid"
+    partially_paid = "partially_paid"
+    paid = "paid"
+
+# ICustomer Model
+class ICustomer(Base):
+    __tablename__ = "customers"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    surname = Column(String, index=True)
-    email = Column(String, unique=True, index=True)
-    address = Column(String)
+    name = Column(String, nullable=False)
+    surname = Column(String, nullable=False)
+    email = Column(String, unique=True, nullable=False)
+    address = Column(String, nullable=False)
 
-    invoices = relationship("Invoice", back_populates="client")
+    # Relationship with IInvoice
+    invoices = relationship("IInvoice", back_populates="customer")
 
-class Invoice(Base):
+# IInvoice Model
+class IInvoice(Base):
     __tablename__ = "invoices"
 
     id = Column(Integer, primary_key=True, index=True)
-    client_id = Column(Integer, ForeignKey("clients.id"))
-    number = Column(String, unique=True, index=True)
-    date = Column(Date)
-    due_date = Column(Date)
-    type = Column(String)  # income/expense
-    status = Column(String, default="unpaid")
-    value = Column(Numeric(10, 2))
+    number = Column(String, unique=True, nullable=False)
+    date = Column(Date, nullable=False)
+    due_date = Column(Date, nullable=False)
+    type = Column(Enum(ITypeEnum), nullable=False)
+    value = Column(Float, nullable=False)
+    status = Column(Enum(IStatusEnum), default=IStatusEnum.unpaid, nullable=False)
 
-    client = relationship("Client", back_populates="invoices")
-    payments = relationship("Payment", back_populates="invoice")
+    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
+    customer = relationship("ICustomer", back_populates="invoices")
 
-class Payment(Base):
+    # Relationship with IPayment
+    payments = relationship("IPayment", back_populates="invoice")
+
+# IPayment Model
+class IPayment(Base):
     __tablename__ = "payments"
 
     id = Column(Integer, primary_key=True, index=True)
-    invoice_id = Column(Integer, ForeignKey("invoices.id"))
-    date = Column(Date)
-    amount = Column(Numeric(10, 2))
+    date = Column(Date, nullable=False)
+    amount = Column(Float, nullable=False)
 
-    invoice = relationship("Invoice", back_populates="payments")
+    invoice_id = Column(Integer, ForeignKey("invoices.id"), nullable=False)
+    invoice = relationship("IInvoice", back_populates="payments")
+
+# IType Model
+class IType(Base):
+    __tablename__ = "invoice_types"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False, unique=True)
