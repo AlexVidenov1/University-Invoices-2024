@@ -1,9 +1,11 @@
 import React from "react";
+import { useParams } from "react-router-dom";
 
 type Props = {};
 
 const SingleInvoice = (props: Props) => {
-  return <div>SingleInvoice</div>;
+  const { id } = useParams();
+  return <div>SingleInvoice {id}</div>;
 };
 
 export default SingleInvoice;
