@@ -1,0 +1,40 @@
+import { ICustomer } from "../../interfaces/ICustomer";
+
+export const dummyCustomers: ICustomer[] = [
+  {
+    id: 1,
+    firstName: "John",
+    middleName: "A.",
+    lastName: "Doe",
+    title: "Mr.",
+    EGN: "1234567890",
+    bulstat: "1234567890123",
+    email: "john.doe@example.com",
+    phone: "+359123456789",
+    address: "123 Main Street, Sofia, Bulgaria",
+  },
+  {
+    id: 2,
+    firstName: "Jane",
+    middleName: "B.",
+    lastName: "Smith",
+    title: "Ms.",
+    EGN: "9876543210",
+    bulstat: "9876543210987",
+    email: "jane.smith@example.com",
+    phone: "+359987654321",
+    address: "456 Elm Avenue, Plovdiv, Bulgaria",
+  },
+  {
+    id: 3,
+    firstName: "Michael",
+    middleName: "C.",
+    lastName: "Johnson",
+    title: "Mr.",
+    EGN: "1122334455",
+    bulstat: "1122334455667",
+    email: "michael.johnson@example.com",
+    phone: "+359234567890",
+    address: "789 Pine Road, Varna, Bulgaria",
+  },
+];

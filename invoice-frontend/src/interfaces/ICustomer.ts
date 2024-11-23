@@ -11,5 +11,5 @@ export interface ICustomer {
   email: string;
   phone: string;
   address: string;
-  invoices: IInvoice[]; // get from backend
+  // invoices?: IInvoice[]; // get from backend
 }
