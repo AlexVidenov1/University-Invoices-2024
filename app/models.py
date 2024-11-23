@@ -5,7 +5,6 @@ from enum import Enum as PyEnum
 
 Base = declarative_base()
 
-# Enum for Invoice Type and Status
 class ITypeEnum(PyEnum):
     income = "income"
     expense = "expense"
@@ -15,57 +14,56 @@ class IStatusEnum(PyEnum):
     partially_paid = "partially_paid"
     paid = "paid"
 
-# ICustomer Model
 class ICustomer(Base):
     __tablename__ = "customers"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    surname = Column(String, nullable=False)
-    email = Column(String, unique=True, nullable=False)
-    address = Column(String, nullable=False)
+    id = Column(Integer, primary_key=True, index=True)  # ID на контрагент
+    name = Column(String, nullable=True)  # Име (за физическо лице)
+    surname = Column(String, nullable=True)  # Фамилия (за физическо лице)
+    fullname = Column(String, nullable=True)  # Наименование (за юридическо лице)
+    egn = Column(String(10), nullable=True, unique=True)  # ЕГН
+    bulstat = Column(String(13), nullable=True, unique=True)  # БУЛСТАТ
+    email = Column(String, unique=True, nullable=False)  # Email
+    phone = Column(String, nullable=True)  # Телефон
+    address = Column(String, nullable=True)  # Адрес за кореспонденция
 
-    # Relationship with IInvoice
     invoices = relationship("IInvoice", back_populates="customer")
 
-# IInvoice Model
 class IInvoice(Base):
     __tablename__ = "invoices"
 
-    id = Column(Integer, primary_key=True, index=True)
-    number = Column(String, unique=True, nullable=False)
-    date = Column(Date, nullable=False)
-    due_date = Column(Date, nullable=False)
-    type = Column(Enum(ITypeEnum), nullable=False)
-    value = Column(Float, nullable=False)
-    status = Column(Enum(IStatusEnum), default=IStatusEnum.unpaid, nullable=False)
+    id = Column(Integer, primary_key=True, index=True)  # ID на фактура
+    number = Column(String(10), unique=True, nullable=False)  # Номер на фактура
+    date = Column(Date, nullable=False)  # Дата на издаване
+    due_date = Column(Date, nullable=False)  # Платима до
+    type = Column(Enum(ITypeEnum), nullable=False)  # Вид фактура (приходна, разходна)
+    value = Column(Float, nullable=False)  # Стойност на фактурата (>0)
+    status = Column(Enum(IStatusEnum), default=IStatusEnum.unpaid, nullable=False)  # Статус (неплатена, частично платена, платена)
+    comment = Column(String(400), nullable=True)  # Коментар
 
-    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
+    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)  # ID на контрагент
     customer = relationship("ICustomer", back_populates="invoices")
 
-    # Relationship with IPayment
     payments = relationship("IPayment", back_populates="invoice")
 
-# IPayment Model
 class IPayment(Base):
     __tablename__ = "payments"
 
-    id = Column(Integer, primary_key=True, index=True)
-    date = Column(Date, nullable=False)
-    amount = Column(Float, nullable=False)
+    id = Column(Integer, primary_key=True, index=True)  # ID на плащане
+    date = Column(Date, nullable=False)  # Дата на плащане
+    amount = Column(Float, nullable=False)  # Сума (>0)
 
-    invoice_id = Column(Integer, ForeignKey("invoices.id"), nullable=False)
+    invoice_id = Column(Integer, ForeignKey("invoices.id"), nullable=False)  # ID на фактура
     invoice = relationship("IInvoice", back_populates="payments")
 
-# IType Model
 class IType(Base):
     __tablename__ = "invoice_types"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False, unique=True)
+    id = Column(Integer, primary_key=True, index=True)  # ID на вид
+    name = Column(String(20), nullable=False, unique=True)  # Наименование на вида
 
 class IUser(Base):
     __tablename__ = "users"
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, index=True)
-    password = Column(String)
+    id = Column(Integer, primary_key=True, index=True)  # ID
+    username = Column(String, unique=True, index=True)  # Username
+    password = Column(String, nullable=False)  # Hashed password
