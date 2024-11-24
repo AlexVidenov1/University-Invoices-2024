@@ -5,11 +5,11 @@ export interface IInvoice {
   id: number;
   customerId: number;
   number: number;
-  date: Date;
-  type: IType;
-  payBy: Date;
+  date: Date | string;
+  type?: IType;
+  payBy: Date | string;
   status: string;
   value: string;
   comment?: string;
-  payments: IPayment[]; // get from backend
+  payments?: IPayment[]; // get from backend
 }

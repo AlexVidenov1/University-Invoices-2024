@@ -40,3 +40,38 @@ export const customerColumns = [
     header: "Address",
   },
 ];
+
+export const invoiceColumns = [
+  {
+    accessorKey: "id",
+    header: "Id",
+  },
+  {
+    accessorKey: "number",
+    header: "Number",
+  },
+  {
+    accessorKey: "date",
+    header: "Date",
+  },
+  {
+    accessorKey: "payBy",
+    header: "Pay By",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+  },
+  {
+    accessorKey: "value",
+    header: "Value",
+  },
+  {
+    accessorKey: "comment",
+    header: "Comment",
+  },
+  {
+    accessorKey: "phone",
+    header: "Phone",
+  },
+];

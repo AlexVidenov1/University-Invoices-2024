@@ -38,3 +38,28 @@ export const dummyCustomers: ICustomer[] = [
     address: "789 Pine Road, Varna, Bulgaria",
   },
 ];
+
+export const dummyInvoices = [
+  {
+    id: 1,
+    customerId: 1,
+    number: 1000,
+    date: new Date(2023 - 11 - 24).toString(),
+    payBy: new Date(2023 - 12 - 24).toString(),
+    status: "Pending",
+    value: " 100.0",
+    comment: "This is a test invoice.",
+    phone: "+1234567890",
+  },
+  {
+    id: 2,
+    customerId: 1,
+    number: 1000,
+    date: new Date(2023 - 11 - 22).toString(),
+    payBy: new Date(2023 - 11 - 30).toString(),
+    status: "Paid",
+    value: " 250.5",
+    comment: "Payment received.",
+    phone: "+9876543210",
+  },
+];

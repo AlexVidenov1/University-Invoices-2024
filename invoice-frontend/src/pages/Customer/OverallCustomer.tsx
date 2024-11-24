@@ -6,7 +6,7 @@ import {
 import React, { useMemo } from "react";
 import { ICustomer } from "../../interfaces/ICustomer";
 import { dummyCustomers } from "./dummydata";
-import { customerColumns } from "../../util/tableUrils";
+import { customerColumns } from "../../util/tableUtils";
 
 type Props = {};
 

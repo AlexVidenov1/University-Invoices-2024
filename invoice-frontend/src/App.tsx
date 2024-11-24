@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Route,
   RouterProvider,
@@ -14,12 +13,11 @@ import SingleInvoice from "./pages/Invoice/SingleInvoice";
 import Error from "./Error";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<RootLayout />}>
-        <Route path="customers" element={<OverallCustomer />}></Route>
+        <Route index path="/" element={<h1>Home</h1>} />
+        <Route path="customers" element={<OverallCustomer />} />
         <Route
           path="customers/:id"
           element={<SingleCustomer />}
