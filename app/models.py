@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, Enum
+from sqlalchemy import BigInteger, Column, Integer, String, Float, Date, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from enum import Enum as PyEnum
@@ -21,8 +21,8 @@ class ICustomer(Base):
     name = Column(String, nullable=True)  # Име (за физическо лице)
     surname = Column(String, nullable=True)  # Фамилия (за физическо лице)
     fullname = Column(String, nullable=True)  # Наименование (за юридическо лице)
-    egn = Column(String(10), nullable=True, unique=True)  # ЕГН
-    bulstat = Column(String(13), nullable=True, unique=True)  # БУЛСТАТ
+    egn = Column(BigInteger, nullable=True, unique=True)  # ЕГН
+    bulstat = Column(BigInteger, nullable=True, unique=True)  # БУЛСТАТ
     email = Column(String, unique=True, nullable=False)  # Email
     phone = Column(String, nullable=True)  # Телефон
     address = Column(String, nullable=True)  # Адрес за кореспонденция
