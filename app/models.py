@@ -32,19 +32,20 @@ class ICustomer(Base):
 class IInvoice(Base):
     __tablename__ = "invoices"
 
-    id = Column(Integer, primary_key=True, index=True)  # ID на фактура
-    number = Column(String(10), unique=True, nullable=False)  # Номер на фактура
-    date = Column(Date, nullable=False)  # Дата на издаване
-    due_date = Column(Date, nullable=False)  # Платима до
-    type = Column(Enum(ITypeEnum), nullable=False)  # Вид фактура (приходна, разходна)
-    value = Column(Float, nullable=False)  # Стойност на фактурата (>0)
-    status = Column(Enum(IStatusEnum), default=IStatusEnum.unpaid, nullable=False)  # Статус (неплатена, частично платена, платена)
-    comment = Column(String(400), nullable=True)  # Коментар
+    id = Column(Integer, primary_key=True, index=True)
+    number = Column(String(10), unique=True, nullable=False)
+    date = Column(Date, nullable=False)
+    due_date = Column(Date, nullable=False)
+    type = Column(Enum(ITypeEnum), nullable=False)
+    value = Column(Float, nullable=False)
+    status = Column(Enum(IStatusEnum), default=IStatusEnum.unpaid, nullable=False)
+    comment = Column(String(400), nullable=True)  # Ensure this line exists
 
-    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)  # ID на контрагент
+    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
     customer = relationship("ICustomer", back_populates="invoices")
 
     payments = relationship("IPayment", back_populates="invoice")
+
 
 class IPayment(Base):
     __tablename__ = "payments"
