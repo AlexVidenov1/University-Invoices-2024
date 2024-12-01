@@ -9,7 +9,7 @@ export interface IInvoice {
   payBy: Date | string;
   type: IType;
   status: string;
-  value: string;
+  value: number;
   comment?: string;
-  payments?: IPayment[]; // get from backend
+  payments: IPayment[]; // get from backend
 }

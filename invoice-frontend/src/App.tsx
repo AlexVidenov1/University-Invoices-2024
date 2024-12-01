@@ -13,6 +13,8 @@ import SingleInvoice from "./pages/Invoice/SingleInvoice";
 import Error from "./Error";
 import Home from "./Home";
 import OverdueInvoice from "./pages/Invoice/OverdueInvoice";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 
 function App() {
   const router = createBrowserRouter(
@@ -38,7 +40,9 @@ function App() {
   );
   return (
     <>
-      <RouterProvider router={router} />
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <RouterProvider router={router} />
+      </LocalizationProvider>
     </>
   );
 }
