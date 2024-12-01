@@ -6,8 +6,8 @@ export interface IInvoice {
   customerId: number;
   number: number;
   date: Date | string;
-  type?: IType;
   payBy: Date | string;
+  type: IType;
   status: string;
   value: string;
   comment?: string;

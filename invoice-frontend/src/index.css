@@ -1,8 +1,10 @@
 :root {
   --dark-blue: #4335a7;
   --light-blue: #80c4e9;
-  --beige: #fff6e9;
+  --beige: #d2e8f3;
   --orange: #ff7f3e;
+  --text-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
 
 body {
@@ -34,4 +36,25 @@ body {
 #navbar .active {
   scale: 1.1;
   color: var(--orange);
+}
+
+.title-for-page {
+  text-align: center;
+  font-size: 30px;
+  margin: 30px;
+}
+
+/* -------------------------------- */
+.info-card {
+  font-family: var(--text-family);
+  font-size: 20px;
+  text-align: center;
+  margin: 30px;
+  border: 2px solid var(--dark-blue);
+  border-radius: 20px;
+  background-color: var(--beige);
+}
+
+.info-value {
+  font-weight: 800;
 }

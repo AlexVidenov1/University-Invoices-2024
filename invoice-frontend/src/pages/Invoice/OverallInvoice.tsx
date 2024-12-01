@@ -1,24 +1,15 @@
-import {
-  MantineReactTable,
-  MRT_ColumnDef,
-  useMantineReactTable,
-} from "mantine-react-table";
-import React, { useMemo } from "react";
-import { IInvoice } from "../../interfaces/IInvoice";
-import { invoiceColumns } from "../../util/tableUtils";
 import { dummyInvoices } from "../Customer/dummydata";
+import InvoiceTable from "./InvoiceTable";
 
 type Props = {};
 
 const OverallInvoice = (props: Props) => {
-  const columns = useMemo<MRT_ColumnDef<IInvoice>[]>(() => invoiceColumns, []);
-
-  const table = useMantineReactTable({
-    columns,
-    data: dummyInvoices,
-  });
-
-  return <MantineReactTable table={table} />;
+  return (
+    <div id="overall-invoices">
+      <h1 className="title-for-page">Overall Invoices Page</h1>
+      <InvoiceTable invoices={dummyInvoices} />
+    </div>
+  );
 };
 
 export default OverallInvoice;

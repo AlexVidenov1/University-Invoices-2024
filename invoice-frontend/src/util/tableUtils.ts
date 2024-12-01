@@ -59,6 +59,10 @@ export const invoiceColumns = [
     header: "Pay By",
   },
   {
+    accessorKey: "type.name",
+    header: "Type",
+  },
+  {
     accessorKey: "status",
     header: "Status",
   },
@@ -69,9 +73,5 @@ export const invoiceColumns = [
   {
     accessorKey: "comment",
     header: "Comment",
-  },
-  {
-    accessorKey: "phone",
-    header: "Phone",
   },
 ];
