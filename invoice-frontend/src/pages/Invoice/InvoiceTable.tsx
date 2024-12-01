@@ -5,8 +5,8 @@ import {
 } from "mantine-react-table";
 import { useMemo } from "react";
 import { IInvoice } from "../../interfaces/IInvoice";
-import { invoiceColumns } from "../../util/tableUtils";
 import { useNavigate } from "react-router-dom";
+import { invoiceColumns } from "../../util/tableUtils";
 
 type InvoiceTable = {
   invoices: IInvoice[];

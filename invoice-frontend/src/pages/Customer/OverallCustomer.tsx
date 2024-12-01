@@ -6,9 +6,9 @@ import {
 import React, { useMemo } from "react";
 import { ICustomer } from "../../interfaces/ICustomer";
 import { dummyCustomers } from "./dummydata";
-import { customerColumns } from "../../util/tableUtils";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { customerColumns } from "../../util/tableUtils";
 
 type Props = {};
 

@@ -60,12 +60,25 @@ export const dummyInvoices = [
     customerId: 1,
     number: 1200,
     date: new Date("2022-03-25").toString(),
-    payBy: new Date("2025-6-11").toString(),
+    payBy: new Date("2024-11-29").toString(),
     type: type.FIRST_TYPE,
     status: "Completed",
     value: 1566,
     comment: "This is a test invoice.",
-    payments: [],
+    payments: [
+      {
+        id: 1,
+        invoiceId: 1,
+        date: new Date("2022-04-25").toString(),
+        value: 1000,
+      },
+      {
+        id: 2,
+        invoiceId: 1,
+        date: new Date("2022-05-20").toString(),
+        value: 200,
+      },
+    ],
   },
   {
     id: 2,
@@ -77,6 +90,7 @@ export const dummyInvoices = [
     value: 10.11,
     status: "Done",
     comment: "This is a test invoice.",
+    payments: [],
   },
   {
     id: 3,

@@ -75,3 +75,18 @@ export const invoiceColumns = [
     header: "Comment",
   },
 ];
+
+export const paymentColumns = [
+  {
+    accessorKey: "id",
+    header: "Id",
+  },
+  {
+    accessorKey: "date",
+    header: "Date",
+  },
+  {
+    accessorKey: "value",
+    header: "Value",
+  },
+];

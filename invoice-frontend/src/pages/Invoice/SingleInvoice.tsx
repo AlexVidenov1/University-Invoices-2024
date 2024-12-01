@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { IInvoice } from "../../interfaces/IInvoice";
 import { dummyInvoices } from "../Customer/dummydata";
@@ -7,6 +7,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { formatDate } from "../../util/commonUtils";
 import { Button, Modal, TextField } from "@mui/material";
+import PaymentsTable from "./PaymentsTable";
+import { IPayment } from "../../interfaces/IPayment";
 
 type Props = {};
 
@@ -42,7 +44,7 @@ const SingleInvoice = (props: Props) => {
 
   const handleSubmit = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    console.log("Edited invoice", editedInvoice);
+    console.log("Edited inoice", editedInvoice);
     // make edit call and reload
     handleCloseModal();
   };
@@ -64,6 +66,7 @@ const SingleInvoice = (props: Props) => {
       </div>
 
       <hr />
+      <PaymentsTable payments={invoice.payments} />
       <Modal
         open={isModalOpen}
         onClose={handleCloseModal}
@@ -142,6 +145,21 @@ const SingleInvoice = (props: Props) => {
 export default SingleInvoice;
 
 export const InvoiceCard = ({ invoice }: { invoice: IInvoice }) => {
+  const calculateTotalSumCovered = (payments: IPayment[]) => {
+    return payments.reduce((acc, cur) => (acc += cur.value), 0);
+  };
+
+  const calculateOverdueDays = useCallback(
+    (invoice: IInvoice) => {
+      const overdueDays =
+        (new Date().getTime() - new Date(invoice.payBy).getTime()) /
+        (1000 * 60 * 60 * 24);
+
+      return parseInt(overdueDays.toFixed(2));
+    },
+    [invoice]
+  );
+
   return (
     <div className="info-card">
       <p>
@@ -159,7 +177,7 @@ export const InvoiceCard = ({ invoice }: { invoice: IInvoice }) => {
         Type: <span className="info-value">{invoice.type.name}</span>
       </p>
       <p>
-        Amount: <span className="info-value">{invoice.value}</span>
+        Amount: <span className="info-value">{invoice.value} lv.</span>
       </p>
       <p>
         Status: <span className="info-value">{invoice.status}</span>
@@ -167,6 +185,28 @@ export const InvoiceCard = ({ invoice }: { invoice: IInvoice }) => {
       <p>
         Comment:
         <span className="info-value">{invoice.comment || "No comment."}</span>
+      </p>
+
+      <hr />
+      <p>
+        Payments sum:
+        <span className="info-value">
+          {calculateTotalSumCovered(invoice.payments)} lv.
+        </span>
+      </p>
+      <p>
+        Remainning:
+        <span className="info-value">
+          {invoice.value - calculateTotalSumCovered(invoice.payments)} lv.
+        </span>
+      </p>
+      <p>
+        {calculateOverdueDays(invoice) > 0
+          ? "Overdue days:"
+          : "Remaining days:"}
+        <span className="info-value">
+          {Math.abs(calculateOverdueDays(invoice))}
+        </span>
       </p>
     </div>
   );
