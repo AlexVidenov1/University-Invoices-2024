@@ -29,3 +29,26 @@ async def get_customer(customer_id: int, db: AsyncSession = Depends(get_db)):
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
     return customer
+
+@router.put("/customers/{customer_id}", response_model=ICustomerRead)
+async def edit_customer(
+    customer_id: int,
+    customer_data: ICustomerCreate,  # Pydantic schema with the fields to update
+    db: AsyncSession = Depends(get_db)
+):
+    # Fetch the existing customer from the database
+    result = await db.execute(select(ICustomer).where(ICustomer.id == customer_id))
+    customer = result.scalar_one_or_none()
+
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+
+    # Update the customer's fields with the new data
+    for key, value in customer_data.dict(exclude_unset=True).items():
+        setattr(customer, key, value)
+
+    # Commit the changes to the database
+    await db.commit()
+    await db.refresh(customer)  # Refresh to get the updated object from the DB
+
+    return customer  # Return the updated customer data as response

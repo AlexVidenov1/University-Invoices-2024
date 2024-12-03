@@ -33,13 +33,14 @@ class IInvoice(Base):
     __tablename__ = "invoices"
 
     id = Column(Integer, primary_key=True, index=True)
-    number = Column(String(10), unique=True, nullable=False)
-    date = Column(Date, nullable=False)
-    due_date = Column(Date, nullable=False)
+    status = Column(Enum(IStatusEnum), nullable=False)
+    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
+    date = Column(Date)
+    due_date = Column(Date)
     type = Column(Enum(ITypeEnum), nullable=False)
-    value = Column(Float, nullable=False)
-    status = Column(Enum(IStatusEnum), default=IStatusEnum.unpaid, nullable=False)
-    comment = Column(String(400), nullable=True)  # Ensure this line exists
+    value = Column(Float)
+    number = Column(String)
+    comment = Column(String, nullable=True)
 
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
     customer = relationship("ICustomer", back_populates="invoices")

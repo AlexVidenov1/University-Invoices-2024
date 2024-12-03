@@ -1,54 +1,7 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator
 from typing import List, Optional
 from datetime import datetime
 from datetime import date
-
-class PaymentBase(BaseModel):
-    date: date
-    amount: float
-
-class PaymentCreate(PaymentBase):
-    pass
-
-class Payment(PaymentBase):
-    id: int
-
-    class Config:
-        orm_mode = True
-
-class InvoiceBase(BaseModel):
-    number: str
-    date: date
-    due_date: date
-    type: str
-    value: float
-    status: str = "unpaid"
-
-class InvoiceCreate(InvoiceBase):
-    client_id: int
-
-class Invoice(InvoiceBase):
-    id: int
-    payments: List[Payment] = []
-
-    class Config:
-        orm_mode = True
-
-class ClientBase(BaseModel):
-    name: str
-    surname: str
-    email: EmailStr
-    address: str
-
-class ClientCreate(ClientBase):
-    pass
-
-class Client(ClientBase):
-    id: int
-    invoices: List[Invoice] = []
-
-    class Config:
-        orm_mode = True
 
 class CustomerCreate(BaseModel):
     fullname: str
@@ -77,31 +30,50 @@ class ICustomerRead(BaseModel):
         orm_mode = True  
 
 class IInvoiceCreate(BaseModel):
+    number: str
+    date: date
+    due_date: date
+    type: str
+    value: float
+    status: str
+    comment: Optional[str] = None
     customer_id: int
-    amount: float
-    due_date: date 
-    ## TO DO
+
 
 class IInvoiceRead(BaseModel):
     id: int
+    status: str
     customer_id: int
-    amount: float
-    due_date: date
+    date: str  # Explicitly marked as a string
+    due_date: str
+    type: str
+    value: float
+    number: str
+    comment: Optional[str] = None
 
-    class Config:
-        from_attributes = True 
+    model_config = {
+        "from_attributes": True,  # Replaces `orm_mode=True` in Pydantic v2
+    }
 
+    # Automatically convert `date` and `due_date` to strings during validation
+    @field_validator("date", "due_date", mode="before")
+    @classmethod
+    def convert_date_to_string(cls, value):
+        if isinstance(value, date):  # Check if it's a date object
+            return value.isoformat()  # Convert to ISO 8601 string
+        return value
 
 class IPaymentCreate(BaseModel):
     invoice_id: int
     amount: float
-    payment_date: datetime
+    date: datetime  # Rename from `payment_date` to `date` to match SQLAlchemy model
 
 class IPaymentRead(BaseModel):
     id: int
     invoice_id: int
     amount: float
-    payment_date: datetime
+    date: datetime  # Rename from `payment_date` to `date`
 
-    class Config:
-        from_attributes = True 
+    model_config = {
+        "from_attributes": True,  # Enable ORM compatibility
+    }
