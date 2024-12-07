@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from app.models import Base
 
-DATABASE_URL = "postgresql+asyncpg://postgres:NqkoidenshesumtejukMilioner111@localhost/invoice_tracking"
+DATABASE_URL = "postgresql+asyncpg://postgres:admin@localhost/invoice_tracking"
 
 # Async database engine
 engine = create_async_engine(DATABASE_URL, echo=True)

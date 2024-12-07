@@ -55,11 +55,11 @@ export const invoiceColumns = [
     header: "Date",
   },
   {
-    accessorKey: "payBy",
-    header: "Pay By",
+    accessorKey: "due_date",
+    header: "Due date",
   },
   {
-    accessorKey: "type.name",
+    accessorKey: "type",
     header: "Type",
   },
   {
@@ -86,7 +86,7 @@ export const paymentColumns = [
     header: "Date",
   },
   {
-    accessorKey: "value",
-    header: "Value",
+    accessorKey: "amount",
+    header: "Amount",
   },
 ];

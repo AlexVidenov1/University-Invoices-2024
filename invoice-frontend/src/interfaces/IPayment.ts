@@ -1,6 +1,6 @@
 export interface IPayment {
   id: number;
-  invoiceId: number;
+  invoice_id: number;
   date: Date | string;
-  value: number;
+  amount: number;
 }

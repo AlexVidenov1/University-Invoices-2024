@@ -3,12 +3,13 @@ import {
   MRT_ColumnDef,
   useMantineReactTable,
 } from "mantine-react-table";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { ICustomer } from "../../interfaces/ICustomer";
 import { dummyCustomers } from "./dummydata";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { customerColumns } from "../../util/tableUtils";
+import { getAllCustomers } from "../../services/CutomerService";
 
 type Props = {};
 
@@ -19,6 +20,18 @@ const OverallCustomer = (props: Props) => {
   );
 
   const navigate = useNavigate();
+
+  const customers = useMemo(() => {}, []);
+
+  const getCustomers = async () => {
+    const customersAll = await getAllCustomers();
+    console.log(customersAll);
+    return customersAll;
+  };
+
+  useEffect(() => {
+    getCustomers();
+  }, []);
 
   const table = useMantineReactTable({
     columns,

@@ -3,7 +3,9 @@ import { ICustomer } from "../interfaces/ICustomer";
 
 export async function getAllCustomers(): Promise<ICustomer[]> {
   try {
-    const response = await axios.get(`/api/users`);
+    const response = await axios.get(`http://127.0.0.1:8000/clients/customers`);
+
+    console.log(response);
     return response.data as ICustomer[];
   } catch (error) {
     console.error("Error getting all customers", error);

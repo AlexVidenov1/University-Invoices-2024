@@ -2,23 +2,21 @@ import { useEffect, useState } from "react";
 import InvoiceTable from "./InvoiceTable";
 import { dummyInvoices } from "../Customer/dummydata";
 import { IInvoice } from "../../interfaces/IInvoice";
+import { getAllOverDueInvoices } from "../../services/InvoiceService";
 
 type Props = {};
 
 const OverdueInvoice = (props: Props) => {
   const [overdueInvoices, setOverdueInvoices] = useState<IInvoice[]>([]);
+
   useEffect(() => {
-    //fetch all invoices
-    const invoices = dummyInvoices;
-
-    const filteredInvoices = invoices.filter((invoice) => {
-      const payByDate = new Date(invoice.payBy);
-      const today = new Date();
-      return payByDate < today;
-    });
-
-    setOverdueInvoices(filteredInvoices);
+    fetch();
   }, []);
+
+  const fetch = async () => {
+    const invoices: IInvoice[] = await getAllOverDueInvoices();
+    setOverdueInvoices(invoices);
+  };
 
   return (
     <div id="overdue-invoices">

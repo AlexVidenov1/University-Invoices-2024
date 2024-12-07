@@ -1,30 +1,49 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { IInvoice } from "../../interfaces/IInvoice";
-import { dummyInvoices } from "../Customer/dummydata";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { formatDate } from "../../util/commonUtils";
 import { Button, Modal, TextField } from "@mui/material";
 import PaymentsTable from "./PaymentsTable";
 import { IPayment } from "../../interfaces/IPayment";
+import {
+  editInvoice,
+  getInvoiceById,
+  getPaymentsForInvoice,
+} from "../../services/InvoiceService";
 
 type Props = {};
 
 const SingleInvoice = (props: Props) => {
   const { id } = useParams();
 
-  const invoice: IInvoice | undefined = useMemo(() => {
+  const [invoice, setInvoice] = useState<IInvoice>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editedInvoice, setEditedInvoice] = useState<IInvoice | undefined>(
+    invoice
+  );
+
+  const fetch = async () => {
+    console.log(" id", id);
     if (id) {
-      return dummyInvoices.find((el) => el.id == parseInt(id));
+      const invoice = await getInvoiceById(+id);
+      const payments = await getPaymentsForInvoice(+id);
+      invoice.payments = payments;
+      setInvoice(invoice);
+      setEditedInvoice(invoice);
     }
+  };
+
+  useEffect(() => {
+    fetch();
   }, [id]);
 
-  if (!invoice) return "Wrong invoice id";
+  useEffect(() => {
+    console.log(invoice, editedInvoice);
+  }, [invoice]);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editedInvoice, setEditedInvoice] = useState<IInvoice>(invoice);
+  if (!invoice || !editedInvoice) return "Wrong invoice id";
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -42,10 +61,12 @@ const SingleInvoice = (props: Props) => {
     });
   };
 
-  const handleSubmit = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Edited inoice", editedInvoice);
-    // make edit call and reload
+    const returnedInvoice = await editInvoice(editedInvoice);
+
+    fetch();
     handleCloseModal();
   };
 
@@ -98,7 +119,7 @@ const SingleInvoice = (props: Props) => {
             />
             <DatePicker
               label="Pay By"
-              value={dayjs(editedInvoice.payBy)}
+              value={dayjs(editedInvoice.due_date)}
               onChange={(newValue) => {
                 if (newValue) {
                   setEditedInvoice({
@@ -146,13 +167,13 @@ export default SingleInvoice;
 
 export const InvoiceCard = ({ invoice }: { invoice: IInvoice }) => {
   const calculateTotalSumCovered = (payments: IPayment[]) => {
-    return payments.reduce((acc, cur) => (acc += cur.value), 0);
+    return payments.reduce((acc, cur) => (acc += cur.amount), 0);
   };
 
   const calculateOverdueDays = useCallback(
     (invoice: IInvoice) => {
       const overdueDays =
-        (new Date().getTime() - new Date(invoice.payBy).getTime()) /
+        (new Date().getTime() - new Date(invoice.due_date).getTime()) /
         (1000 * 60 * 60 * 24);
 
       return parseInt(overdueDays.toFixed(2));
@@ -171,10 +192,10 @@ export const InvoiceCard = ({ invoice }: { invoice: IInvoice }) => {
       </p>
       <p>
         Pay by:
-        <span className="info-value">{formatDate(invoice.payBy)}</span>
+        <span className="info-value">{formatDate(invoice.due_date)}</span>
       </p>
       <p>
-        Type: <span className="info-value">{invoice.type.name}</span>
+        Type: <span className="info-value">{invoice.type}</span>
       </p>
       <p>
         Amount: <span className="info-value">{invoice.value} lv.</span>

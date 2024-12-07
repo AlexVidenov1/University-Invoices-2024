@@ -3,13 +3,13 @@ import { IType } from "./IType";
 
 export interface IInvoice {
   id: number;
-  customerId: number;
-  number: number;
-  date: Date | string;
-  payBy: Date | string;
-  type: IType;
   status: string;
+  customer_id: number;
+  date: Date | string;
+  due_date: Date | string;
+  type: string;
   value: number;
+  number: number;
   comment?: string;
   payments: IPayment[]; // get from backend
 }
