@@ -3,6 +3,8 @@ import { IInvoice } from "../interfaces/IInvoice";
 import { IPayment } from "../interfaces/IPayment";
 import { formatDateForInvoiceCreation, STATUS } from "../util/commonUtils";
 
+axios.defaults.headers.common["Authorization"] = `Bearer asd`;
+
 export async function getAllInvoices(): Promise<IInvoice[]> {
   try {
     const response = await axios.get(`http://127.0.0.1:8000/invoices/invoices`);

@@ -3,8 +3,17 @@ import { useParams } from "react-router-dom";
 import { IInvoice } from "../../interfaces/IInvoice";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import { formatDate } from "../../util/commonUtils";
-import { Button, Modal, TextField } from "@mui/material";
+import { formatDate, STATUS, TYPE } from "../../util/commonUtils";
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  MenuItem,
+  Modal,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
 import PaymentsTable from "./PaymentsTable";
 import { IPayment } from "../../interfaces/IPayment";
 import {
@@ -31,6 +40,9 @@ const SingleInvoice = (props: Props) => {
   });
   const [isModalCreatePaymentOpen, setIsModalCreatePaymentOpen] =
     useState(false);
+
+  const [isStatusChangeModalOpen, setStatusChangeModal] = useState(false);
+  const [changedStatus, setChangedtatus] = useState(" ");
 
   const fetch = async () => {
     if (id) {
@@ -85,6 +97,29 @@ const SingleInvoice = (props: Props) => {
     setIsModalCreatePaymentOpen(false);
   };
 
+  const handleChangeType = (event: SelectChangeEvent) => {
+    setEditedInvoice({
+      ...editedInvoice,
+      type: event.target.value,
+    });
+  };
+
+  const handleStatusChange = (event: SelectChangeEvent) => {
+    setChangedtatus(event.target.value);
+  };
+
+  const handleSatusSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const modifiedInvoice = {
+      ...invoice,
+      status: changedStatus,
+    };
+    const returnedInvoice = await editInvoice(modifiedInvoice);
+    fetch();
+    setStatusChangeModal(false);
+  };
+
   return (
     <div id="single-invoice">
       <InvoiceCard invoice={invoice} />
@@ -95,6 +130,9 @@ const SingleInvoice = (props: Props) => {
           disabled={invoice.payments.length > 0 ? true : false}
         >
           Edit Invoice
+        </Button>
+        <Button variant="contained" onClick={() => setStatusChangeModal(true)}>
+          Change Status
         </Button>
         <Button
           variant="contained"
@@ -151,13 +189,17 @@ const SingleInvoice = (props: Props) => {
                 }
               }}
             />
-            <TextField
-              label="Status"
-              name="status"
-              value={editedInvoice.status}
-              onChange={handleChange}
-              fullWidth
-            />
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              label="Type"
+              name="Type"
+              placeholder="Type"
+              onChange={handleChangeType}
+            >
+              <MenuItem value={TYPE.EXPENSE}>{TYPE.EXPENSE}</MenuItem>
+              <MenuItem value={TYPE.INCOME}>{TYPE.INCOME}</MenuItem>
+            </Select>
             <TextField
               label="Amount"
               name="value"
@@ -212,6 +254,36 @@ const SingleInvoice = (props: Props) => {
               name="amount"
               fullWidth
               onChange={handleChangeInvoice}
+            />
+            <Button type="submit" variant="contained" color="primary">
+              Save
+            </Button>
+          </form>
+        </div>
+      </Modal>
+
+      <Modal
+        open={isStatusChangeModalOpen}
+        onClose={() => setStatusChangeModal(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <div className="wrapper-modal-form">
+          <form className="edit-form" onSubmit={(e) => handleSatusSubmit(e)}>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              label="Status"
+              name="status"
+              placeholder="Status"
+              onChange={handleStatusChange}
+            >
+              <MenuItem value={STATUS.PAID}>{STATUS.PAID}</MenuItem>
+              <MenuItem value={STATUS.UNPAID}>{STATUS.UNPAID}</MenuItem>
+            </Select>
+            <FormControlLabel
+              control={<Checkbox required />}
+              label="Confirm Status Change"
             />
             <Button type="submit" variant="contained" color="primary">
               Save
