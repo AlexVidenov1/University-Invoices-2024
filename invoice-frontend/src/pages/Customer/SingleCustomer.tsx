@@ -243,6 +243,7 @@ const SingleCustomer = () => {
             <DatePicker
               label="Due date"
               name="due_date"
+              shouldDisableDate={(day) => day.isBefore(dayjs(newInvoice.date))}
               value={dayjs(newInvoice.due_date)}
               onChange={(newValue) => {
                 if (newValue) {

@@ -102,3 +102,25 @@ export async function createInvoice(
     throw error;
   }
 }
+
+export async function createPayment(
+  invoiceId: number,
+  data: any
+): Promise<any> {
+  try {
+    const finalPayload = {
+      invoice_id: invoiceId,
+      amount: +data.amount,
+      date: formatDateForInvoiceCreation(data.date),
+    };
+
+    const response = await axios.post(
+      `http://127.0.0.1:8000/payments/payments/invoices/${invoiceId}/payments`,
+      finalPayload
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error createing a payment", error);
+    throw error;
+  }
+}

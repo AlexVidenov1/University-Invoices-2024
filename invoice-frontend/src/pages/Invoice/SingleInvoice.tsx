@@ -8,6 +8,7 @@ import { Button, Modal, TextField } from "@mui/material";
 import PaymentsTable from "./PaymentsTable";
 import { IPayment } from "../../interfaces/IPayment";
 import {
+  createPayment,
   editInvoice,
   getInvoiceById,
   getPaymentsForInvoice,
@@ -23,6 +24,13 @@ const SingleInvoice = (props: Props) => {
   const [editedInvoice, setEditedInvoice] = useState<IInvoice | undefined>(
     invoice
   );
+
+  const [newPayment, setNewPayment] = useState({
+    date: new Date(),
+    amount: 0,
+  });
+  const [isModalCreatePaymentOpen, setIsModalCreatePaymentOpen] =
+    useState(false);
 
   const fetch = async () => {
     if (id) {
@@ -58,10 +66,23 @@ const SingleInvoice = (props: Props) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Edited inoice", editedInvoice);
     const returnedInvoice = await editInvoice(editedInvoice);
     fetch();
     handleCloseModal();
+  };
+
+  const handleChangeInvoice = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNewPayment({
+      ...newPayment,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const handleSubmitPayment = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    createPayment(+id!, newPayment);
+    fetch();
+    setIsModalCreatePaymentOpen(false);
   };
 
   return (
@@ -75,7 +96,11 @@ const SingleInvoice = (props: Props) => {
         >
           Edit Invoice
         </Button>
-        <Button variant="contained" color="success">
+        <Button
+          variant="contained"
+          color="success"
+          onClick={() => setIsModalCreatePaymentOpen(true)}
+        >
           Create Payment
         </Button>
       </div>
@@ -114,6 +139,9 @@ const SingleInvoice = (props: Props) => {
             <DatePicker
               label="Pay By"
               value={dayjs(editedInvoice.due_date)}
+              shouldDisableDate={(day) =>
+                day.isBefore(dayjs(editedInvoice.date))
+              }
               onChange={(newValue) => {
                 if (newValue) {
                   setEditedInvoice({
@@ -153,6 +181,44 @@ const SingleInvoice = (props: Props) => {
           </form>
         </div>
       </Modal>
+
+      <Modal
+        open={isModalCreatePaymentOpen}
+        onClose={() => setIsModalCreatePaymentOpen(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <div className="wrapper-modal-form">
+          <form className="edit-form" onSubmit={(e) => handleSubmitPayment(e)}>
+            <DatePicker
+              label="Due date"
+              name="due_date"
+              value={dayjs(newPayment.date)}
+              shouldDisableDate={(day) => day.isBefore(dayjs(invoice.date))}
+              onChange={(newValue) => {
+                if (newValue) {
+                  setNewPayment({
+                    ...newPayment,
+                    date: newValue.toDate(),
+                  });
+                }
+              }}
+            />
+            <TextField
+              required={true}
+              type="number"
+              InputProps={{ inputProps: { min: 0 } }}
+              label="Amount"
+              name="amount"
+              fullWidth
+              onChange={handleChangeInvoice}
+            />
+            <Button type="submit" variant="contained" color="primary">
+              Save
+            </Button>
+          </form>
+        </div>
+      </Modal>
     </div>
   );
 };
@@ -160,9 +226,12 @@ const SingleInvoice = (props: Props) => {
 export default SingleInvoice;
 
 export const InvoiceCard = ({ invoice }: { invoice: IInvoice }) => {
-  const calculateTotalSumCovered = (payments: IPayment[]) => {
-    return payments.reduce((acc, cur) => (acc += cur.amount), 0);
-  };
+  const calculateTotalSumCovered = useCallback(
+    (payments: IPayment[]) => {
+      return payments.reduce((acc, cur) => (acc += cur.amount), 0);
+    },
+    [invoice]
+  );
 
   const calculateOverdueDays = useCallback(
     (invoice: IInvoice) => {
