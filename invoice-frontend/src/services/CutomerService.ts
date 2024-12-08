@@ -15,7 +15,9 @@ export async function getAllCustomers(): Promise<ICustomer[]> {
 
 export async function getCustomerById(customerId: number): Promise<ICustomer> {
   try {
-    const response = await axios.get(`/api/users`);
+    const response = await axios.get(
+      `http://127.0.0.1:8000/clients/customers/${customerId}`
+    );
     return response.data as ICustomer;
   } catch (error) {
     console.error("Error getting a customer", error);

@@ -1,32 +1,61 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { dummyCustomers, dummyInvoices } from "./dummydata";
 import { ICustomer } from "../../interfaces/ICustomer";
 import InvoiceTable from "../Invoice/InvoiceTable";
-import { Button, Modal, TextField } from "@mui/material";
+import {
+  Button,
+  MenuItem,
+  Modal,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
+import { getCustomerById } from "../../services/CutomerService";
+import {
+  createInvoice,
+  getAllInvoicesForCustomer,
+} from "../../services/InvoiceService";
+import { IInvoice } from "../../interfaces/IInvoice";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { TYPE } from "../../util/commonUtils";
 
-type Props = {};
-
-const SingleCustomer = (props: Props) => {
+const SingleCustomer = () => {
   const { id } = useParams();
-  const customer: ICustomer | undefined = useMemo(() => {
+  const [customer, setCustomer] = useState<ICustomer>();
+  const [invoices, setInvoices] = useState<IInvoice[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editedCustomer, setEditedCustomer] = useState<ICustomer | undefined>(
+    customer
+  );
+
+  const [newInvoice, setNewInvoice] = useState({
+    date: new Date(),
+    due_date: new Date(),
+    type: " ",
+    value: " ",
+    number: " ",
+    comment: " ",
+  });
+
+  const [isModalCreateInvoiceOpen, setIsModalCreateInvoiceOpen] =
+    useState(false);
+
+  const fetch = async () => {
     if (id) {
-      return dummyCustomers.find((el) => el.id == parseInt(id));
+      const customer = await getCustomerById(+id);
+      const invoices = await getAllInvoicesForCustomer(+id);
+      setCustomer(customer);
+      setEditedCustomer(customer);
+      setInvoices(invoices);
     }
+  };
+
+  useEffect(() => {
+    fetch();
   }, [id]);
 
-  if (!customer) return "Wrong customer id";
-
-  const invoices = useMemo(() => {
-    console.log(" dummyInvoice", dummyInvoices);
-    // fetch for customer invoices
-    return dummyInvoices.filter(
-      (invoice) => invoice.customerId == customer?.id
-    );
-  }, [customer]);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editedCustomer, setEditedCustomer] = useState<ICustomer>(customer);
+  if (!customer || !editedCustomer) return "Wrong customer id";
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -37,6 +66,14 @@ const SingleCustomer = (props: Props) => {
     setIsModalOpen(false);
   };
 
+  const handleOpenModalInvoice = () => {
+    setIsModalCreateInvoiceOpen(true);
+  };
+
+  const handleCloseModalInvoice = () => {
+    setIsModalCreateInvoiceOpen(false);
+  };
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEditedCustomer({
       ...editedCustomer,
@@ -44,11 +81,33 @@ const SingleCustomer = (props: Props) => {
     });
   };
 
-  const handleSubmit = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeInvoice = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNewInvoice({
+      ...newInvoice,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Edited customer", editedCustomer);
-    // make edit call and reload
+    // fetch();
     handleCloseModal();
+  };
+
+  const handleSubmitInvoice = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("New invoice", newInvoice);
+    createInvoice(customer.id, newInvoice);
+    fetch();
+    handleCloseModalInvoice();
+  };
+
+  const handleChangeType = (event: SelectChangeEvent) => {
+    setNewInvoice({
+      ...newInvoice,
+      type: event.target.value,
+    });
   };
 
   return (
@@ -58,7 +117,11 @@ const SingleCustomer = (props: Props) => {
         <Button variant="contained" onClick={() => handleOpenModal()}>
           Edit Customer
         </Button>
-        <Button variant="contained" color="success">
+        <Button
+          variant="contained"
+          color="success"
+          onClick={() => handleOpenModalInvoice()}
+        >
           Create Invoice
         </Button>
       </div>
@@ -140,6 +203,82 @@ const SingleCustomer = (props: Props) => {
               fullWidth
             />
             {/* ... other fields for middleName, lastName, etc. ... */}
+            <Button type="submit" variant="contained" color="primary">
+              Save
+            </Button>
+          </form>
+        </div>
+      </Modal>
+
+      <Modal
+        open={isModalCreateInvoiceOpen}
+        onClose={handleCloseModalInvoice}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <div className="wrapper-modal-form">
+          <form className="edit-form" onSubmit={(e) => handleSubmitInvoice(e)}>
+            <TextField
+              required={true}
+              label="Number"
+              name="number"
+              type="number"
+              InputProps={{ inputProps: { min: 0 } }}
+              fullWidth
+              onChange={handleChangeInvoice}
+            />
+            <DatePicker
+              label="Date"
+              name="date"
+              value={dayjs(newInvoice.date)}
+              onChange={(newValue) => {
+                if (newValue) {
+                  setNewInvoice({
+                    ...newInvoice,
+                    date: newValue.toDate(),
+                  });
+                }
+              }}
+            />
+            <DatePicker
+              label="Due date"
+              name="due_date"
+              value={dayjs(newInvoice.due_date)}
+              onChange={(newValue) => {
+                if (newValue) {
+                  setNewInvoice({
+                    ...newInvoice,
+                    due_date: newValue.toDate(),
+                  });
+                }
+              }}
+            />
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              label="Type"
+              name="Type"
+              placeholder="Type"
+              onChange={handleChangeType}
+            >
+              <MenuItem value={TYPE.EXPENSE}>{TYPE.EXPENSE}</MenuItem>
+              <MenuItem value={TYPE.INCOME}>{TYPE.INCOME}</MenuItem>
+            </Select>
+            <TextField
+              required={true}
+              type="number"
+              InputProps={{ inputProps: { min: 0 } }}
+              label="Amount"
+              name="value"
+              fullWidth
+              onChange={handleChangeInvoice}
+            />
+            <TextField
+              label="Comment"
+              name="comment"
+              fullWidth
+              onChange={handleChangeInvoice}
+            />
             <Button type="submit" variant="contained" color="primary">
               Save
             </Button>

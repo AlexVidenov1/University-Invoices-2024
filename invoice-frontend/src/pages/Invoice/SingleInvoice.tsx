@@ -25,7 +25,6 @@ const SingleInvoice = (props: Props) => {
   );
 
   const fetch = async () => {
-    console.log(" id", id);
     if (id) {
       const invoice = await getInvoiceById(+id);
       const payments = await getPaymentsForInvoice(+id);
@@ -38,10 +37,6 @@ const SingleInvoice = (props: Props) => {
   useEffect(() => {
     fetch();
   }, [id]);
-
-  useEffect(() => {
-    console.log(invoice, editedInvoice);
-  }, [invoice]);
 
   if (!invoice || !editedInvoice) return "Wrong invoice id";
 
@@ -65,7 +60,6 @@ const SingleInvoice = (props: Props) => {
     e.preventDefault();
     console.log("Edited inoice", editedInvoice);
     const returnedInvoice = await editInvoice(editedInvoice);
-
     fetch();
     handleCloseModal();
   };

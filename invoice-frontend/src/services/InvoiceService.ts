@@ -1,6 +1,7 @@
 import axios from "axios";
 import { IInvoice } from "../interfaces/IInvoice";
 import { IPayment } from "../interfaces/IPayment";
+import { formatDateForInvoiceCreation, STATUS } from "../util/commonUtils";
 
 export async function getAllInvoices(): Promise<IInvoice[]> {
   try {
@@ -73,6 +74,31 @@ export async function editInvoice(invoice: IInvoice): Promise<IInvoice> {
     return response.data;
   } catch (error) {
     console.error("Error editing invoice", error);
+    throw error;
+  }
+}
+
+export async function createInvoice(
+  customerId: number,
+  data: any
+): Promise<any> {
+  try {
+    const finalPayload = {
+      customer_id: customerId,
+      status: STATUS.UNPAID,
+      ...data,
+      date: formatDateForInvoiceCreation(data.date),
+      due_date: formatDateForInvoiceCreation(data.due_date),
+    };
+
+    console.log("final", finalPayload);
+    const response = await axios.post(
+      `http://127.0.0.1:8000/invoices/invoices`,
+      finalPayload
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error getting a customer", error);
     throw error;
   }
 }
