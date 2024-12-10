@@ -18,28 +18,6 @@ class ICustomerCreate(BaseModel):
     email: str
     phone: str
     address: str
-
-class ICustomerRead(BaseModel):
-    id: int
-    name: str
-    surname: str
-    email: str
-    address: str
-
-    class Config:
-        orm_mode = True  
-
-class IInvoiceCreate(BaseModel):
-    number: str
-    date: date
-    due_date: date
-    type: str
-    value: float
-    status: str
-    comment: Optional[str] = None
-    customer_id: int
-
-
 class IInvoiceRead(BaseModel):
     id: int
     status: str
@@ -62,6 +40,31 @@ class IInvoiceRead(BaseModel):
         if isinstance(value, date):  # Check if it's a date object
             return value.isoformat()  # Convert to ISO 8601 string
         return value
+
+class ICustomerRead(BaseModel):
+    id: int
+    name: Optional[str]
+    surname: Optional[str]
+    fullname: Optional[str]
+    egn: Optional[int]
+    bulstat: Optional[int]
+    email: str
+    phone: Optional[str]
+    address: Optional[str]
+    invoices: List[IInvoiceRead]
+
+    class Config:
+        orm_mode = True  
+
+class IInvoiceCreate(BaseModel):
+    number: str
+    date: date
+    due_date: date
+    type: str
+    value: float
+    status: str
+    comment: Optional[str] = None
+    customer_id: int
 
 class IPaymentCreate(BaseModel):
     invoice_id: int

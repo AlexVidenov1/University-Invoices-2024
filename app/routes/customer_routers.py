@@ -5,6 +5,7 @@ from app.models import ICustomer
 from app.database import get_db
 from app.schemas import ICustomerCreate, ICustomerRead  # Import Pydantic schemas
 from typing import List  # Import List type from typing module
+from sqlalchemy.orm import selectinload
 
 router = APIRouter()
 
@@ -18,7 +19,7 @@ async def create_customer(customer: ICustomerCreate, db: AsyncSession = Depends(
 
 @router.get("/customers", response_model=List[ICustomerRead])
 async def list_customers(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(ICustomer))
+    result = await db.execute(select(ICustomer).options(selectinload(ICustomer.invoices)))
     customers = result.scalars().all()
     return customers
 

@@ -27,7 +27,7 @@ class ICustomer(Base):
     phone = Column(String, nullable=True)  # Телефон
     address = Column(String, nullable=True)  # Адрес за кореспонденция
 
-    invoices = relationship("IInvoice", back_populates="customer")
+    invoices = relationship("IInvoice", back_populates="customer", lazy='selectin')
 
 class IInvoice(Base):
     __tablename__ = "invoices"
