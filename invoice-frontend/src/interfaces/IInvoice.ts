@@ -1,5 +1,4 @@
 import { IPayment } from "./IPayment";
-import { IType } from "./IType";
 
 export interface IInvoice {
   id: number;

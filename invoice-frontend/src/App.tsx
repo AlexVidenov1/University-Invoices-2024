@@ -15,6 +15,7 @@ import Home from "./Home";
 import OverdueInvoice from "./pages/Invoice/OverdueInvoice";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
+import Login from "./pages/Login";
 
 function App() {
   const router = createBrowserRouter(
@@ -34,6 +35,7 @@ function App() {
           errorElement={<Error />}
         />
         <Route path="overdueInvoices" element={<OverdueInvoice />} />
+        <Route path="/login" element={<Login />}></Route>
         <Route path="*" element={<NotFound />} />
       </Route>
     )
