@@ -24,3 +24,30 @@ export async function getCustomerById(customerId: number): Promise<ICustomer> {
     throw error;
   }
 }
+
+export async function editCustomer(customer: ICustomer): Promise<ICustomer> {
+  delete customer.invoices;
+  try {
+    const response = await axios.put(
+      `http://127.0.0.1:8000/clients/customers/${customer.id}`,
+      customer
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error editing customer", error);
+    throw error;
+  }
+}
+
+export async function createCustomer(data: any): Promise<any> {
+  try {
+    const response = await axios.post(
+      `http://127.0.0.1:8000/clients/customers`,
+      data
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error creating a customer", error);
+    throw error;
+  }
+}

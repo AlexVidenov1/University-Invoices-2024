@@ -10,7 +10,7 @@ import {
   SelectChangeEvent,
   TextField,
 } from "@mui/material";
-import { getCustomerById } from "../../services/CutomerService";
+import { editCustomer, getCustomerById } from "../../services/CutomerService";
 import {
   createInvoice,
   getAllInvoicesForCustomer,
@@ -75,6 +75,7 @@ const SingleCustomer = () => {
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(" change");
     setEditedCustomer({
       ...editedCustomer,
       [event.target.name]: event.target.value,
@@ -91,7 +92,8 @@ const SingleCustomer = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Edited customer", editedCustomer);
-    // fetch();
+    editCustomer(editedCustomer);
+    fetch();
     handleCloseModal();
   };
 
@@ -141,36 +143,29 @@ const SingleCustomer = () => {
           <form className="edit-form" onSubmit={(e) => handleSubmit(e)}>
             <TextField
               label="First Name"
-              name="firstName"
-              value={editedCustomer.firstName}
+              name="name"
+              value={editedCustomer.name}
               onChange={handleChange}
               fullWidth
             />
             <TextField
               label="Middle Name"
-              name="middleName"
-              value={editedCustomer.middleName}
+              name="surname"
+              value={editedCustomer.surname}
               onChange={handleChange}
               fullWidth
             />
             <TextField
               label="Last Name"
-              name="lastName"
-              value={editedCustomer.lastName}
-              onChange={handleChange}
-              fullWidth
-            />
-            <TextField
-              label="Title"
-              name="title"
-              value={editedCustomer.title}
+              name="fullname"
+              value={editedCustomer.fullname}
               onChange={handleChange}
               fullWidth
             />
             <TextField
               label="EGN"
-              name="EGN"
-              value={editedCustomer.EGN}
+              name="egn"
+              value={editedCustomer.egn}
               onChange={handleChange}
               fullWidth
             />
@@ -296,19 +291,16 @@ const CustomerCard = ({ customer }: { customer: ICustomer | undefined }) => {
   return (
     <div className="info-card">
       <p>
-        First Name: <span className="info-value">{customer?.firstName}</span>
+        First Name: <span className="info-value">{customer?.name}</span>
       </p>
       <p>
-        Middle Name: <span className="info-value">{customer?.middleName}</span>
+        Middle Name: <span className="info-value">{customer?.surname}</span>
       </p>
       <p>
-        Last Name: <span className="info-value">{customer?.lastName}</span>
+        Last Name: <span className="info-value">{customer?.fullname}</span>
       </p>
       <p>
-        Title: <span className="info-value">{customer?.title}</span>
-      </p>
-      <p>
-        EGN: <span className="info-value">{customer?.EGN}</span>
+        EGN: <span className="info-value">{customer?.egn}</span>
       </p>
       <p>
         Bulstat: <span className="info-value">{customer?.bulstat}</span>

@@ -4,23 +4,19 @@ export const customerColumns = [
     header: "Id",
   },
   {
-    accessorKey: "firstName",
+    accessorKey: "name",
     header: "First Name",
   },
   {
-    accessorKey: "middleName",
+    accessorKey: "surname",
     header: "Middle Name",
   },
   {
-    accessorKey: "lastName",
+    accessorKey: "fullname",
     header: "Last Name",
   },
   {
-    accessorKey: "title",
-    header: "Title",
-  },
-  {
-    accessorKey: "EGN",
+    accessorKey: "egn",
     header: "EGN",
   },
   {

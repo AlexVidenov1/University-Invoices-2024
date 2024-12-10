@@ -105,6 +105,27 @@ export async function createInvoice(
   }
 }
 
+export async function createInvoiceForCustomer(data: any): Promise<any> {
+  try {
+    const finalPayload = {
+      status: STATUS.UNPAID,
+      ...data,
+      date: formatDateForInvoiceCreation(data.date),
+      due_date: formatDateForInvoiceCreation(data.due_date),
+    };
+
+    console.log("final", finalPayload);
+    const response = await axios.post(
+      `http://127.0.0.1:8000/invoices/invoices`,
+      finalPayload
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error getting a customer", error);
+    throw error;
+  }
+}
+
 export async function createPayment(
   invoiceId: number,
   data: any
