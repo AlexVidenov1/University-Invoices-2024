@@ -102,7 +102,7 @@ const OverallInvoice = (props: Props) => {
         style={{ marginBottom: " 20px" }}
         onClick={() => setIsModalOpen(true)}
       >
-        Create Customer
+        Create Invoice
       </Button>
       <InvoiceTable invoices={invoices} />
 

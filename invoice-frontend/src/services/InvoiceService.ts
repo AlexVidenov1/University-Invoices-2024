@@ -71,7 +71,11 @@ export async function editInvoice(invoice: IInvoice): Promise<IInvoice> {
   try {
     const response = await axios.put(
       `http://127.0.0.1:8000/invoices/invoices/${invoice.id}`,
-      invoice
+      {
+        ...invoice,
+        date: formatDateForInvoiceCreation(invoice.date),
+        due_date: formatDateForInvoiceCreation(invoice.due_date),
+      }
     );
     return response.data;
   } catch (error) {

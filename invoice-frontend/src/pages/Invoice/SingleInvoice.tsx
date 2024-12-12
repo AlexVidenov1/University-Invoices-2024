@@ -78,6 +78,7 @@ const SingleInvoice = (props: Props) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log(" Edited invoice", editedInvoice);
     const returnedInvoice = await editInvoice(editedInvoice);
     fetch();
     handleCloseModal();
@@ -184,7 +185,7 @@ const SingleInvoice = (props: Props) => {
                 if (newValue) {
                   setEditedInvoice({
                     ...editedInvoice,
-                    date: newValue.toDate(),
+                    due_date: newValue.toDate(),
                   });
                 }
               }}
@@ -351,7 +352,7 @@ export const InvoiceCard = ({ invoice }: { invoice: IInvoice }) => {
         </span>
       </p>
       <p>
-        Remainning:
+        Remaining:
         <span className="info-value">
           {invoice.value - calculateTotalSumCovered(invoice.payments)} lv.
         </span>
